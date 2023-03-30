@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="628e046f-3d87-42c0-8426-37d2a08afc6f" name="Changes" comment="See names and see people">
+    <list default="true" id="628e046f-3d87-42c0-8426-37d2a08afc6f" name="Changes" comment="Cleaned up the code and comments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -50,12 +50,19 @@
       <option name="presentableId" value="LOCAL−00001" />
       <updated>1680016295735</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL−00002" summary="Cleaned up the code and comments">
+      <created>1680174039626</created>
+      <option name="number" value="LOCAL−00002" />
+      <option name="presentableId" value="LOCAL−00002" />
+      <updated>1680174039626</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Choose who you want to see" />
     <MESSAGE value="See names and see people" />
-    <option name="LAST_COMMIT_MESSAGE" value="See names and see people" />
+    <MESSAGE value="Cleaned up the code and comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up the code and comments" />
   </component>
 </project>

@@ -21,7 +21,7 @@ public class Main {
 
         // Starts the client
         try {
-            //Init Socket with specific port
+            // Init Socket with specific port
             socket = new Socket("localhost", 42069);
 
             // Init Reader and Writer och connect them to socket
