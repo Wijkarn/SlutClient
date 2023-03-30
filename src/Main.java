@@ -12,45 +12,45 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Client is ready!");
 
-        //Init stuff. Set as null to be initialized as "something"
+        // Init stuff. Set as null to be initialized as "something"
         Socket socket = null;
         InputStreamReader inputSR = null;
         OutputStreamWriter outputSW = null;
         BufferedReader bReader = null;
         BufferedWriter bWriter = null;
 
-        //Starta Klienten
+        // Starts the client
         try {
-            //Init Socket med specifik port
+            //Init Socket with specific port
             socket = new Socket("localhost", 42069);
 
-            //Initiera Reader och Writer och koppla dem till socket
+            // Init Reader and Writer och connect them to socket
             inputSR = new InputStreamReader(socket.getInputStream());
             outputSW = new OutputStreamWriter(socket.getOutputStream());
             bReader = new BufferedReader(inputSR);
             bWriter = new BufferedWriter(outputSW);
 
-            //Initiera Scanner för att skriva i konsol
-            Scanner scan = new Scanner(System.in);
+            // Init Scanner to write in console
+            //Scanner scan = new Scanner(System.in);
 
             while (true) {
-                //Anroppar meny för användare, låter dem göra ett val.
-                //Valet returneras som ett färdigt JSON string
+                // Calls the menu for user and lets them choose
+                // The choice returns as a complete JSON String
                 String message = userInput();
 
-                //Skicka meddelande till server
+                // Close down if the user types "quit"
+                if (message.equalsIgnoreCase("{\"httpURL\":\"quit\",\"httpMethod\":\"get\"}")) break;
+
+                // Send message to server
                 bWriter.write(message);
                 bWriter.newLine();
                 bWriter.flush();
 
-                //Hämta response från server
+                // Get response form server
                 String resp = bReader.readLine();
 
-                //Anropa openResponse metod med server response
+                // Calls openResponse method with server response and client input
                 openResponse(resp, message);
-
-                //Avsluta om QUIT
-                if (message.equalsIgnoreCase("quit")) break;
             }
         } catch (UnknownHostException e) {
             System.out.println(e);
@@ -60,12 +60,12 @@ public class Main {
             System.out.println(e);
         } finally {
             try {
-                //Stäng kopplingar
-                if (socket != null ) socket.close();
-                if (inputSR != null ) inputSR.close();
-                if (outputSW != null ) outputSW.close();
-                if (bWriter != null ) bWriter.close();
-                if (bReader != null ) bReader.close();
+                // Close all connections
+                if (socket != null) socket.close();
+                if (inputSR != null) inputSR.close();
+                if (outputSW != null) outputSW.close();
+                if (bWriter != null) bWriter.close();
+                if (bReader != null) bReader.close();
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -74,75 +74,64 @@ public class Main {
     }
 
     static String userInput() {
-        //Steg 1. Skriv ut en meny för användaren
-        System.out.println("Who do you want information about?\nTo name all people type \"name\".");
+        // Prints menu for the user
+        System.out.println("Who do you want information about?\nTo see all people type \"name\".");
 
-        //Steg 2. Låta användaren göra ett val
+        // Lets the user choose
         Scanner scan = new Scanner(System.in);
         System.out.print("Your choice:");
 
         String choice = scan.nextLine();
         String choiceSend = choice.toLowerCase();
 
-        //Steg 3. Bearbeta användarens val
-        //Skapa JSON objekt för att hämta data om alla personer. Stringifiera objeketet och returnera det
+        // Create JSONObjekt to get data for all people. Stringify object and return it
         JSONObject jsonReturn = new JSONObject();
         jsonReturn.put("httpURL", choiceSend);
         jsonReturn.put("httpMethod", "get");
 
-        //System.out.println(jsonReturn.toJSONString());
-
-        //Returnera JSON objekt
+        // Returns JSONObject
         return jsonReturn.toJSONString();
-
-        //return "error";
     }
 
-    static String openResponse(String resp, String message) throws ParseException {
-        //System.out.println(message);
-
+    static void openResponse(String resp, String message) throws ParseException {
+        // Converts client input to string again
         JSONParser parser = new JSONParser();
         JSONObject jsonOb = (JSONObject) parser.parse(message);
         String messageString = jsonOb.get("httpURL").toString();
         String[] cutMsgString = messageString.split("/");
-        String who = cutMsgString[0];
-        //System.out.println(who);
+        String userMessage = cutMsgString[0];
 
-        String stringResponse = "";
-        //Init Parser för att parsa till JSON Objekt
-        //JSONParser parser = new JSONParser();
+        //String stringResponse = "";
 
-        //Skapar ett JSON objekt från server respons
+        // Creates a JSONObject from server response
         JSONObject serverResponse = (JSONObject) parser.parse(resp);
 
-        //Kollar om respons lyckas
+        // Check if response was successful
         if ("200".equals(serverResponse.get("httpStatusCode").toString())) {
-
-            //Bygger upp ett JSONObjekt av den returnerade datan
+            // Builds a JSONObject of the returned data
             JSONObject data = (JSONObject) parser.parse((String) serverResponse.get("data"));
-            System.out.println(data);
+            //System.out.println(data);
 
-            if("name".equals(who)) {
-                //Hämtar en lista av alla nycklar attribut i data och loopar sedan igenom dem
+            if ("name".equals(userMessage) || "names".equals(userMessage)) {
+                // Gets a list of all keys attribute in data and loops them
                 Set<String> keys = data.keySet();
                 for (String x : keys) {
-                    //Hämtar varje person object som finns i data
+                    // Gets all people from server
                     JSONObject person = (JSONObject) data.get(x);
 
-                    //Skriv ut namnet på person
-                    System.out.println(person.get(who));
+                    // Prints out all names
+                    System.out.println(person.get("name"));
                 }
-            }
-            else{
-                JSONObject person = (JSONObject) data.get(who);
+            } else {
+                JSONObject person = (JSONObject) data.get(userMessage);
 
-                //Skriv ut namnet på person
-                System.out.println(person.get("name"));
-                System.out.println(person.get("rank"));
-                System.out.println(person.get("legion"));
+                // Prints out the values
+                System.out.println("Name: " + person.get("name"));
+                System.out.println("Rank: " + person.get("rank"));
+                System.out.println("Legion: " + person.get("legion"));
             }
         }
 
-        return stringResponse;
+        //return stringResponse;
     }
 }
